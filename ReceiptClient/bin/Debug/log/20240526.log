@@ -1,0 +1,8 @@
+2024-05-26 20:45:35,120 [1] [ERROR] (MoveNext) - ログイン失敗：System.Exception: Error InternalServerError: Internal Server Error
+   場所 shinseiClient.Shared.State.<DoLogin>d__34.MoveNext() 場所 C:\work\Git\050_application-management\application-management\shinseiClient\shinseiClient\Shared\State.cs:行 619
+--- 直前に例外がスローされた場所からのスタック トレースの終わり ---
+   場所 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   場所 shinseiClient.FrmLogin.<btnLogin_Click>d__8.MoveNext() 場所 C:\work\Git\050_application-management\application-management\shinseiClient\shinseiClient\FrmLogin.cs:行 126
+2024-05-26 20:46:14,014 [1] [INFO ] (MoveNext) - ログイン成功

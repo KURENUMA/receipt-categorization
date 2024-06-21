@@ -1,0 +1,81 @@
+2024-05-04 00:19:35,868 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 00:27:00,504 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 00:29:47,285 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 00:30:57,484 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:07:54,133 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:09:31,459 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:10:12,417 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:13:59,812 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:15:43,209 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:47:19,542 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 01:50:13,824 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 02:01:12,831 [1] [ERROR] (MoveNext) - ログイン失敗：System.Net.Http.HttpRequestException: この要求の送信中にエラーが発生しました。 ---> System.Net.WebException: リモート サーバーに接続できません。 ---> System.Net.Sockets.SocketException: 対象のコンピューターによって拒否されたため、接続できませんでした。 127.0.0.1:7262
+   場所 System.Net.Sockets.Socket.InternalEndConnect(IAsyncResult asyncResult)
+   場所 System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   場所 System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Exception& exception)
+   --- 内部例外スタック トレースの終わり ---
+   場所 System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   場所 System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- 内部例外スタック トレースの終わり ---
+   場所 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   場所 shinseiClient.Shared.State.<DoLogin>d__34.MoveNext() 場所 C:\work\Git\050_application-management\application-management\shinseiClient\shinseiClient\Shared\State.cs:行 609
+--- 直前に例外がスローされた場所からのスタック トレースの終わり ---
+   場所 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   場所 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   場所 shinseiClient.FrmLogin.<btnLogin_Click>d__8.MoveNext() 場所 C:\work\Git\050_application-management\application-management\shinseiClient\shinseiClient\FrmLogin.cs:行 115
+2024-05-04 02:01:35,454 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 09:47:03,749 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 09:47:35,037 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 09:55:14,354 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 09:56:46,132 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:03:34,831 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:07:08,516 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:08:12,283 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:08:41,916 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:54:02,879 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 10:58:18,574 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:05:07,174 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:06:22,417 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:18:33,002 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:19:16,446 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:19:25,794 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:23:33,354 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:42:09,181 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:43:44,419 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:47:11,051 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:51:02,704 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 11:51:30,960 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 12:03:39,771 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 12:09:20,439 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 12:10:50,085 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:12:12,768 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:28:30,599 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:30:03,206 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:35:24,803 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:51:31,293 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:51:56,668 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:52:14,922 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:53:03,848 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:54:17,678 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:56:30,162 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:56:44,918 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:58:05,903 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:58:43,054 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 19:59:25,988 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:00:15,240 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:03:26,453 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:03:41,738 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:04:11,364 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:09:25,464 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:10:10,355 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:15:33,402 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:16:59,371 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:25:17,126 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:28:05,051 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:33:22,109 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:34:47,905 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:39:07,881 [1] [INFO ] (MoveNext) - ログイン成功
+2024-05-04 20:44:31,555 [1] [INFO ] (MoveNext) - ログイン成功

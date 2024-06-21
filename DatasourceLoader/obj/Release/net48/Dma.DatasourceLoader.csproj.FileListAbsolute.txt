@@ -1,0 +1,10 @@
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\bin\Release\net48\Dma.DatasourceLoader.dll
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\bin\Release\net48\Dma.DatasourceLoader.pdb
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.csproj.AssemblyReference.cache
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.GeneratedMSBuildEditorConfig.editorconfig
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.AssemblyInfoInputs.cache
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.AssemblyInfo.cs
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.csproj.CoreCompileInputs.cache
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.sourcelink.json
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.dll
+C:\work\Git\050_application-management\application-management\shinseiClient\DatasourceLoader\obj\Release\net48\Dma.DatasourceLoader.pdb

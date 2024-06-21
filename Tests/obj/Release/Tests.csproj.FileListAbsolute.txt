@@ -1,0 +1,2 @@
+C:\work\Git\050_application-management\application-management\shinseiClient\Tests\obj\Release\Tests.csproj.AssemblyReference.cache
+C:\work\Git\050_application-management\application-management\shinseiClient\Tests\obj\Release\Tests.csproj.CoreCompileInputs.cache

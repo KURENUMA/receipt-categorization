@@ -1,0 +1,7 @@
+﻿<FileList>
+  <File Reference="C1.Win.C1FlexGrid.GroupPanel.4.8.dll">
+    <ToolboxItems VSCategory="C1 WinForms Controls" BlendCategory="C1 WinForms Controls">
+      <Item Type="C1.Win.C1FlexGrid.C1FlexGridGroupPanel"/>
+    </ToolboxItems>
+  </File>
+</FileList>
