@@ -20,13 +20,14 @@ using System.ComponentModel;
 using ReceiptClient.Common;
 using C1.Win.C1Input;
 using static C1.Util.Win.Win32;
+using System.Reflection;
 
 namespace ReceiptClient
 {
     public partial class FrmShowProject : Form
     {
         private ProjectGridManager projectGridManager;
-        //データテーブルレイアウト
+        // データテーブルレイアウト
         private GridOrderManager gridManager;
         private GridColorManager colorManager;
 
@@ -60,8 +61,35 @@ namespace ReceiptClient
             c1ComboBox1.SelectedItem = "100";
             BtnUpdate.Enabled = true;
 
+            // 固定の画像を読み込む
+            LoadInitialImage();
+
             // パターンUIを初期化
             initPatternUI();
+        }
+
+        private void LoadInitialImage()
+        {
+            // アセンブリ内のリソース名を取得して確認する
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceNames = assembly.GetManifestResourceNames();
+            foreach (var resourceName in resourceNames)
+            {
+                Console.WriteLine(resourceName);
+            }
+
+            // リソース名が正しいか確認してから使用する
+            using (Stream stream = assembly.GetManifestResourceStream("ReceiptClient.Resources.InitialImage.jpeg"))
+            {
+                if (stream != null)
+                {
+                    c1PictureBox1.Image = Image.FromStream(stream);
+                }
+                else
+                {
+                    MessageBox.Show("リソースが見つかりませんでした。");
+                }
+            }
         }
 
         /// <summary>
@@ -109,6 +137,7 @@ namespace ReceiptClient
 
             projectGridManager.OnDataSourceChange += GdProjectList_RowColChange;
             projectGrid1.GridDoubleClick += new System.EventHandler(c1FlexGrid1_DoubleClick);
+            //以下は行変更時のイベントハンドラとする予定
             //projectGrid1.c1FlexGrid1.AfterRowChange += c1FlexGrid1_AfterRowChange;
 
             InitializeColumns();
@@ -186,7 +215,7 @@ namespace ReceiptClient
             projectGrid1.SetGridColors();
 
             /*
-            // 行が変更された時に画像を更新
+            // 行が変更された時に画像を更新する予定
             var fileId = projectGrid1.c1FlexGrid1[projectGrid1.c1FlexGrid1.Row, "FileId"]?.ToString();
             if (!string.IsNullOrEmpty(fileId))
             {
@@ -420,6 +449,22 @@ namespace ReceiptClient
         private void c1ComboBox1_SelectedItemChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void c1FlexGrid1_AfterRowChange(object sender, RangeEventArgs e)
+        {
+            /* ★行変更時の画像変更処理を記載する予定
+            var grid = (C1FlexGrid)sender;
+            var fileId = grid[e.Row, "FileId"]?.ToString();
+
+            if (!string.IsNullOrEmpty(fileId))
+            {
+                using (var stream = GoogleDriveHelper.GetFileStream(fileId))
+                {
+                    c1PictureBox1.Image = Image.FromStream(stream);
+                }
+            }
+            */
         }
     }
 }

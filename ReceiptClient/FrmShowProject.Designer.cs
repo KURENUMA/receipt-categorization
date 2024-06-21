@@ -272,6 +272,7 @@
             this.c1PictureBox1.Location = new System.Drawing.Point(746, 104);
             this.c1PictureBox1.Name = "c1PictureBox1";
             this.c1PictureBox1.Size = new System.Drawing.Size(510, 707);
+            this.c1PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.c1PictureBox1.TabIndex = 38;
             this.c1PictureBox1.TabStop = false;
             // 
@@ -297,7 +298,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FrmShowProject";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "物件一覧";
+            this.Text = "領収書一覧";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmShowProject_FormClosing);
             this.Load += new System.EventHandler(this.FrmShowProject_Load);
             this.groupBox2.ResumeLayout(false);
