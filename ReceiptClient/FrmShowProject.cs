@@ -137,7 +137,7 @@ namespace ReceiptClient
 
             projectGridManager.OnDataSourceChange += GdProjectList_RowColChange;
             projectGrid1.GridDoubleClick += new System.EventHandler(c1FlexGrid1_DoubleClick);
-            //以下は行変更時のイベントハンドラとする予定
+            //★以下は行変更時のイベントハンドラとする予定
             //projectGrid1.c1FlexGrid1.AfterRowChange += c1FlexGrid1_AfterRowChange;
 
             InitializeColumns();
@@ -214,11 +214,12 @@ namespace ReceiptClient
 
             InitializeColumns();
 
-            // Gridの色を設定する
-            projectGrid1.SetGridColors();
+            // ★Gridの色を設定するときに使うけど、今回はいらないと思う
+            //projectGrid1.SetGridColors();
 
             /*
-            // 行が変更された時に画像を更新する予定
+            // ★行が変更された時に画像を更新する予定
+            //   ここでGoogleDriveHelperをCallして、画像を取得できれば
             var fileId = projectGrid1.c1FlexGrid1[projectGrid1.c1FlexGrid1.Row, "FileId"]?.ToString();
             if (!string.IsNullOrEmpty(fileId))
             {

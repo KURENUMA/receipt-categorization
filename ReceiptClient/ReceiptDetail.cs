@@ -203,5 +203,52 @@ namespace ReceiptClient
         {
             PasteClipboardData();
         }
+
+        private void btnImageDownload_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // c1PictureBox1に表示されている画像を取得
+                if (c1PictureBox1.Image == null)
+                {
+                    MessageBox.Show("表示されている画像がありません。");
+                    return;
+                }
+
+                // 画像をビットマップとして取得
+                Bitmap bitmap;
+                using (var originalImage = new Bitmap(c1PictureBox1.Image))
+                {
+                    bitmap = new Bitmap(originalImage);
+                }
+
+                // 保存ダイアログを表示
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "PNG Image|*.png";
+                    saveFileDialog.Title = "Save an Image File";
+                    saveFileDialog.FileName = "image.png";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // ユーザーがファイルを保存する場所を選択した場合
+                        string filePath = saveFileDialog.FileName;
+
+                        // 画像を選択された場所に保存
+                        bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                        MessageBox.Show("画像が保存されました。");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"エラーが発生しました: {ex.Message}");
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
