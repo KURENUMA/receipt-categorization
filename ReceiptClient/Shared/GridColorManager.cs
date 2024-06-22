@@ -47,8 +47,10 @@ namespace ReceiptClient.Shared
             }
             else
             {
+                /*
                 _settings = new Settings { Users = new List<UserSettings>() };
                 _settings.Users.Add(LoadColorsFromDatabaseAsync().GetAwaiter().GetResult()); // DBから色情報を読み込む
+                */
                 SaveSettings(); // 新規ファイルの作成
             }
         }
