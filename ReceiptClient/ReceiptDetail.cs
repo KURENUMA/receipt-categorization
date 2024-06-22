@@ -20,6 +20,8 @@ namespace ReceiptClient
     {
         private static readonly HttpClient httpClient = new HttpClient();
 
+        private const string GPT4V_KEY = ""; // Azure APIキー
+        private const string GPT4V_ENDPOINT = "";
         public ReceiptDetail()
         {
             InitializeComponent();
@@ -117,96 +119,23 @@ namespace ReceiptClient
                 byte[] imageBytes;
                 using (var memoryStream = new MemoryStream())
                 {
-                    using (var bitmap = new Bitmap(c1PictureBox1.Image))
-                    {
-                        bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                    }
+                    c1PictureBox1.Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
                     imageBytes = memoryStream.ToArray();
                 }
 
                 // 画像をBase64エンコード
                 string base64Image = Convert.ToBase64String(imageBytes);
 
-                // チャットセッションを開始して最初のメッセージを送信
-                var initialPayload = new
-                {
-                    model = "gpt-4-vision-preview",
-                    messages = new[]
-                    {
-                new { role = "system", content = "あなたは画像解析の専門家です。これから送信される領収書の画像データを解析し、内容を抽出してください。" },
-                new { role = "user", content = "これから数回にわたって領収書の画像データを送信します。最後にすべてのデータをまとめて処理してください。" }
-            }
-                };
+                // Azure OpenAI APIにリクエストを送信
+                var result = await SendImageToOpenAIAsync(base64Image, "Please extract the text from this receipt.");
 
-                var initialResponse = await SendChatMessageAsync(initialPayload);
-                if (initialResponse == null)
-                {
-                    MessageBox.Show("初期メッセージの送信に失敗しました。");
-                    return;
-                }
-
-                // メッセージを分割して送信
-                int chunkSize = 5000; // 適切なサイズに調整
-                int offset = 0;
-                bool isFirstChunk = true;
-
-                while (offset < base64Image.Length)
-                {
-                    int size = Math.Min(chunkSize, base64Image.Length - offset);
-                    string base64Chunk = base64Image.Substring(offset, size);
-                    offset += size;
-
-                    // 最初のチャンクにプレフィックスを付ける
-                    if (isFirstChunk)
-                    {
-                        base64Chunk = $"data:image/jpeg;base64,{base64Chunk}";
-                        isFirstChunk = false;
-                    }
-
-                    var chunkPayload = new
-                    {
-                        model = "gpt-4-vision-preview",
-                        messages = new[]
-                        {
-                    new { role = "user", content = $"これが領収書の画像データの一部です：\n\n{base64Chunk}" }
-                }
-                    };
-
-                    var chunkResponse = await SendChatMessageAsync(chunkPayload);
-                    if (chunkResponse == null)
-                    {
-                        MessageBox.Show("データチャンクの送信に失敗しました。");
-                        return;
-                    }
-                }
-
-                // 最後のメッセージを送信して処理を依頼
-                var finalPayload = new
-                {
-                    model = "gpt-4-vision-preview",
-                    messages = new[]
-                    {
-                new { role = "user", content = "以上でデータの送信は終了です。これらのデータをまとめて処理し、領収書の内容をExcel形式に変換してください。" }
-            }
-                };
-
-                var finalResponse = await SendChatMessageAsync(finalPayload);
-                if (finalResponse == null)
-                {
-                    MessageBox.Show("最終メッセージの送信に失敗しました。");
-                    return;
-                }
-
-                // 最終レスポンスからデータを取得してExcelに保存
-                string base64Excel = finalResponse;
-                byte[] excelBytes = Convert.FromBase64String(base64Excel);
-                SaveToExcel(excelBytes);
-
-                MessageBox.Show("処理が完了しました。");
+                // 結果を表示
+                MessageBox.Show($"APIレスポンス: {result}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("エラーが発生しました: " + ex.Message);
+                MessageBox.Show($"エラーが発生しました: {ex.Message}");
             }
             finally
             {
@@ -215,87 +144,60 @@ namespace ReceiptClient
             }
         }
 
-        private async Task<string> SendChatMessageAsync(object payload)
+        private async Task<string> SendImageToOpenAIAsync(string base64Image, string question)
         {
-            int retryCount = 0;
-            int maxRetries = 5;
-            int delay = 2000; // 2秒待機
-
-            while (retryCount < maxRetries)
+            using (var httpClient = new HttpClient())
             {
-                using (var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"))
+                httpClient.DefaultRequestHeaders.Add("api-key", GPT4V_KEY);
+
+                var payload = new
                 {
-                    // OpenAIのAPIキーを設定
-                    string apiKey = "";
-                    if (string.IsNullOrEmpty(apiKey))
+                    messages = new object[]
                     {
-                        MessageBox.Show("APIキーが設定されていません。");
-                        return null;
-                    }
-
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-
-                    // 正しいAPIエンドポイントを使用
-                    var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
-
-                    if ((int)response.StatusCode == 429) // 429 Too Many Requests
-                    {
-                        retryCount++;
-                        if (retryCount == maxRetries)
-                        {
-                            MessageBox.Show("リクエストが過剰です。後でもう一度お試しください。");
-                            return null;
+                new {
+                    role = "system",
+                    content = new object[] {
+                        new {
+                            type = "text",
+                            text = "You are an AI assistant that helps people find information."
                         }
-                        await Task.Delay(delay); // 一定時間待機
-                        continue;
                     }
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        // レスポンスが成功しなかった場合のデバッグ情報
-                        string errorContent = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show($"リクエスト失敗: ステータスコード: {(int)response.StatusCode}, 内容: {errorContent}");
-                        return null;
+                },
+                new {
+                    role = "user",
+                    content = new object[] {
+                        new {
+                            type = "image_url",
+                            image_url = new {
+                                url = $"data:image/jpeg;base64,{base64Image}"
+                            }
+                        },
+                        new {
+                            type = "text",
+                            text = question
+                        }
                     }
-
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    dynamic result = JsonConvert.DeserializeObject(responseContent);
-
-                    // レスポンスのデバッグ情報を表示
-                    MessageBox.Show($"レスポンス内容: {responseContent}");
-
-                    // レスポンスから必要なデータを抽出
-                    string contentText = result.choices[0].message.content.ToString();
-                    return contentText;
                 }
-            }
-
-            return null; // 最大リトライ回数を超えた場合
-        }
-
-        private void SaveToExcel(byte[] excelBytes)
-        {
-            try
-            {
-                var saveFileDialog = new SaveFileDialog
-                {
-                    Filter = "Excel Files|*.xlsx",
-                    Title = "Save an Excel File"
+                    },
+                    temperature = 0.7,
+                    top_p = 0.95,
+                    max_tokens = 800,
+                    stream = false
                 };
 
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                var response = await httpClient.PostAsync(GPT4V_ENDPOINT, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
                 {
-                    File.WriteAllBytes(saveFileDialog.FileName, excelBytes);
-                    MessageBox.Show("Excelファイルが保存されました。");
+                    var responseData = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                    return responseData.ToString();
+                }
+                else
+                {
+                    return $"Error: {response.StatusCode}, {response.ReasonPhrase}";
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Excelファイルの保存中にエラーが発生しました: " + ex.Message);
-            }
         }
-
-
 
         private void btnPaste_Click(object sender, EventArgs e)
         {
