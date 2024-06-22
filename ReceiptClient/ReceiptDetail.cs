@@ -12,6 +12,7 @@ using C1.Win.C1FlexGrid;
 using C1.Win.C1Input;
 using ClosedXML.Excel;
 using Newtonsoft.Json;
+using ReceiptClient.Common;
 
 namespace ReceiptClient
 {
@@ -98,9 +99,11 @@ namespace ReceiptClient
                 MessageBox.Show("データの貼り付け中にエラーが発生しました: " + ex.Message);
             }
         }
-
         private async void btnAI_Click(object sender, EventArgs e)
         {
+            // ウェイトカーソルを表示
+            Application.UseWaitCursor = true;
+
             try
             {
                 // c1PictureBox1に表示されている画像を取得
@@ -121,46 +124,153 @@ namespace ReceiptClient
                     imageBytes = memoryStream.ToArray();
                 }
 
-                // APIリクエストを作成
-                using (var content = new MultipartFormDataContent())
+                // 画像をBase64エンコード
+                string base64Image = Convert.ToBase64String(imageBytes);
+
+                // チャットセッションを開始して最初のメッセージを送信
+                var initialPayload = new
                 {
-                    // 画像ファイルを追加
-                    var imageContent = new ByteArrayContent(imageBytes);
-                    imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
-                    content.Add(imageContent, "file", "image.png");
-
-                    // メッセージを追加
-                    var messageContent = new StringContent("{\"role\": \"user\", \"content\": \"これは領収書の画像です。これをExcelの表にしてください。\"}", Encoding.UTF8, "application/json");
-                    content.Add(messageContent, "payload_json");
-
-                    // OpenAIのAPIキーを設定
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "");
-
-                    // 正しいAPIエンドポイントを使用
-                    var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
-                    response.EnsureSuccessStatusCode();
-
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    dynamic result = JsonConvert.DeserializeObject(responseContent);
-
-                    // APIレスポンスからExcelのBase64データを取得
-                    string base64Excel = result.choices[0].message.content.ToString();
-
-                    // Base64データをバイト配列に変換
-                    byte[] excelBytes = Convert.FromBase64String(base64Excel);
-
-                    // 保存ダイアログを表示してファイルを保存
-                    SaveToExcel(excelBytes);
-                }
+                    model = "gpt-4-vision-preview",
+                    messages = new[]
+                    {
+                new { role = "system", content = "あなたは画像解析の専門家です。これから送信される領収書の画像データを解析し、内容を抽出してください。" },
+                new { role = "user", content = "これから数回にわたって領収書の画像データを送信します。最後にすべてのデータをまとめて処理してください。" }
             }
-            catch (HttpRequestException ex)
-            {
-                MessageBox.Show("HTTPリクエストエラー: " + ex.Message);
+                };
+
+                var initialResponse = await SendChatMessageAsync(initialPayload);
+                if (initialResponse == null)
+                {
+                    MessageBox.Show("初期メッセージの送信に失敗しました。");
+                    return;
+                }
+
+                // メッセージを分割して送信
+                int chunkSize = 5000; // 適切なサイズに調整
+                int offset = 0;
+                bool isFirstChunk = true;
+
+                while (offset < base64Image.Length)
+                {
+                    int size = Math.Min(chunkSize, base64Image.Length - offset);
+                    string base64Chunk = base64Image.Substring(offset, size);
+                    offset += size;
+
+                    // 最初のチャンクにプレフィックスを付ける
+                    if (isFirstChunk)
+                    {
+                        base64Chunk = $"data:image/jpeg;base64,{base64Chunk}";
+                        isFirstChunk = false;
+                    }
+
+                    var chunkPayload = new
+                    {
+                        model = "gpt-4-vision-preview",
+                        messages = new[]
+                        {
+                    new { role = "user", content = $"これが領収書の画像データの一部です：\n\n{base64Chunk}" }
+                }
+                    };
+
+                    var chunkResponse = await SendChatMessageAsync(chunkPayload);
+                    if (chunkResponse == null)
+                    {
+                        MessageBox.Show("データチャンクの送信に失敗しました。");
+                        return;
+                    }
+                }
+
+                // 最後のメッセージを送信して処理を依頼
+                var finalPayload = new
+                {
+                    model = "gpt-4-vision-preview",
+                    messages = new[]
+                    {
+                new { role = "user", content = "以上でデータの送信は終了です。これらのデータをまとめて処理し、領収書の内容をExcel形式に変換してください。" }
+            }
+                };
+
+                var finalResponse = await SendChatMessageAsync(finalPayload);
+                if (finalResponse == null)
+                {
+                    MessageBox.Show("最終メッセージの送信に失敗しました。");
+                    return;
+                }
+
+                // 最終レスポンスからデータを取得してExcelに保存
+                string base64Excel = finalResponse;
+                byte[] excelBytes = Convert.FromBase64String(base64Excel);
+                SaveToExcel(excelBytes);
+
+                MessageBox.Show("処理が完了しました。");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("エラーが発生しました: " + ex.Message);
             }
+            finally
+            {
+                // ウェイトカーソルを非表示
+                Application.UseWaitCursor = false;
+            }
+        }
+
+        private async Task<string> SendChatMessageAsync(object payload)
+        {
+            int retryCount = 0;
+            int maxRetries = 5;
+            int delay = 2000; // 2秒待機
+
+            while (retryCount < maxRetries)
+            {
+                using (var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"))
+                {
+                    // OpenAIのAPIキーを設定
+                    string apiKey = "";
+                    if (string.IsNullOrEmpty(apiKey))
+                    {
+                        MessageBox.Show("APIキーが設定されていません。");
+                        return null;
+                    }
+
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+                    // 正しいAPIエンドポイントを使用
+                    var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+
+                    if ((int)response.StatusCode == 429) // 429 Too Many Requests
+                    {
+                        retryCount++;
+                        if (retryCount == maxRetries)
+                        {
+                            MessageBox.Show("リクエストが過剰です。後でもう一度お試しください。");
+                            return null;
+                        }
+                        await Task.Delay(delay); // 一定時間待機
+                        continue;
+                    }
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // レスポンスが成功しなかった場合のデバッグ情報
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"リクエスト失敗: ステータスコード: {(int)response.StatusCode}, 内容: {errorContent}");
+                        return null;
+                    }
+
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    dynamic result = JsonConvert.DeserializeObject(responseContent);
+
+                    // レスポンスのデバッグ情報を表示
+                    MessageBox.Show($"レスポンス内容: {responseContent}");
+
+                    // レスポンスから必要なデータを抽出
+                    string contentText = result.choices[0].message.content.ToString();
+                    return contentText;
+                }
+            }
+
+            return null; // 最大リトライ回数を超えた場合
         }
 
         private void SaveToExcel(byte[] excelBytes)
@@ -184,6 +294,8 @@ namespace ReceiptClient
                 MessageBox.Show("Excelファイルの保存中にエラーが発生しました: " + ex.Message);
             }
         }
+
+
 
         private void btnPaste_Click(object sender, EventArgs e)
         {
