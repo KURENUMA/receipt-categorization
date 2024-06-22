@@ -8,7 +8,6 @@ using Dma.DatasourceLoader.Creator;
 using Dma.DatasourceLoader.Models;
 using Dma.DatasourceLoader;
 using ReceiptClient.Models;
-using ReceiptClient.TestData;
 using ReceiptClient.ViewModels;
 
 namespace ReceiptClient.UserControls

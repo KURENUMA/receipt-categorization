@@ -1,0 +1,16 @@
+# Ignore .vs directories
+.vs/
+DatasourceLoader/.vs/
+ReceiptClient/.vs/
+Tests/.vs/
+
+# Ignore bin and obj directories
+**/bin/
+**/obj/
+
+# Ignore other potential unwanted files
+*.user
+*.suo
+*.db
+*.log
+*.DS_Store

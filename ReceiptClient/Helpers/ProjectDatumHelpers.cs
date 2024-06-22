@@ -1,46 +1,63 @@
-﻿using C1.Win.C1FlexGrid;
-using ReceiptClient.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using C1.Win.C1FlexGrid;
+using ReceiptClient.Models;
 using ReceiptClient.Shared;
 
 namespace ReceiptClient
 {
     public static class ProjectDatumHelpers
     {
-        /// <summary>
-        /// データマッピングを設定
-        /// 表示したいデータは本個所で設定する
-        /// 列名 | 幅 | データの型 | 文字位置 | フォント | 設定するデータ
-        /// ラムダ式を使用して設定→ラムダ式：簡潔な関数（メソッド）の表現方法
-        /// 例：data => ((ReceiptInfo)data).Idはdataオブジェクトを受け取り、ReceiptInfoにキャストしてIdプロパティの値を返す動作となる
-        /// </summary>
         public static readonly List<ColumnMappingConfig> ColumnConfigs = new List<ColumnMappingConfig>
         {
-            new ColumnMappingConfig("ID", 50, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).Id), "Id", false),
+            new ColumnMappingConfig("領収書ID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).領収書ID), "領収書ID", false),
 
-            new ColumnMappingConfig("領収書番号", 50, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).領収書番号), "領収書番号", false),
+            new ColumnMappingConfig("テナントID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).テナントID), "テナントID", false),
 
-            new ColumnMappingConfig("金額", 50, typeof(decimal), TextAlignEnum.RightCenter, new Font("Arial", 10),
+            new ColumnMappingConfig("クライアントID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).クライアントID), "クライアントID", false),
+
+            new ColumnMappingConfig("税理士ID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).税理士ID), "税理士ID", false),
+
+            new ColumnMappingConfig("取引日時", 120, typeof(DateTime), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).取引日時), "取引日時", false),
+
+            new ColumnMappingConfig("取引内容", 200, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).取引内容), "取引内容", false),
+
+            new ColumnMappingConfig("金額", 100, typeof(decimal), TextAlignEnum.RightCenter, new Font("Arial", 10),
                 new LambdaMappingStrategy(data => ((ReceiptInfo)data).金額), "金額", false),
 
-            new ColumnMappingConfig("日付", 100, typeof(DateTime), TextAlignEnum.CenterCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).日付), "日付", false),
+            new ColumnMappingConfig("内消費税", 100, typeof(decimal), TextAlignEnum.RightCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).内消費税), "内消費税", false),
 
-            new ColumnMappingConfig("説明", 150, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).説明), "説明", false),
+            new ColumnMappingConfig("処理ステータス", 100, typeof(short), TextAlignEnum.CenterCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).処理ステータス), "処理ステータス", false),
 
-            new ColumnMappingConfig("ベンダー名", 150, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).ベンダー名), "ベンダー名", false),
+            new ColumnMappingConfig("画像データパス", 200, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).画像データパス), "画像データパス", false),
 
-            new ColumnMappingConfig("支払い方法", 120, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).支払い方法), "支払い方法", false),
+            new ColumnMappingConfig("作成日時", 120, typeof(DateTime), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).作成日時), "作成日時", false),
 
-            new ColumnMappingConfig("備考", 200, typeof(string), TextAlignEnum.LeftCenter, new Font("Arial", 10),
-                new LambdaMappingStrategy(data => ((ReceiptInfo)data).備考), "備考", false)
+            new ColumnMappingConfig("作成者ID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).作成者ID), "作成者ID", false),
+
+            new ColumnMappingConfig("更新日時", 120, typeof(DateTime), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).更新日時), "更新日時", false),
+
+            new ColumnMappingConfig("更新者ID", 100, typeof(int), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).更新者ID), "更新者ID", false),
+
+            new ColumnMappingConfig("削除フラグ", 80, typeof(bool), TextAlignEnum.CenterCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).削除フラグ), "削除フラグ", false),
+
+            new ColumnMappingConfig("削除日時", 120, typeof(DateTime?), TextAlignEnum.LeftCenter, new Font("Arial", 10),
+                new LambdaMappingStrategy(data => ((ReceiptInfo)data).削除日時), "削除日時", false)
         };
     }
 }

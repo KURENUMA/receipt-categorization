@@ -181,6 +181,9 @@ namespace ReceiptClient
                 col.Name = config.VarName;
                 col.AllowFiltering = AllowFiltering.None;
             }
+
+            // 列幅を自動調整
+            projectGrid1.c1FlexGrid1.AutoSizeCols();
         }
 
         /// <summary>
@@ -297,6 +300,10 @@ namespace ReceiptClient
         {
             using (var progressForm = new SimpleProgressForm())
             {
+                // 詳細画面を開く
+                var ReceiptDetail = new ReceiptDetail();
+                ReceiptDetail.Owner = this;
+                ReceiptDetail.Show();
             }
         }
 
