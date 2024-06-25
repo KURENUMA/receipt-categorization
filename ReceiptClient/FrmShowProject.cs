@@ -21,6 +21,9 @@ using ReceiptClient.Common;
 using C1.Win.C1Input;
 using static C1.Util.Win.Win32;
 using System.Reflection;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
 
 namespace ReceiptClient
 {
@@ -70,25 +73,37 @@ namespace ReceiptClient
 
         private void LoadInitialImage()
         {
-            // アセンブリ内のリソース名を取得して確認する
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceNames = assembly.GetManifestResourceNames();
-            foreach (var resourceName in resourceNames)
+            string fileId = "1D0qV9ZIRpvjq7DJbfWRSw1oaJNjRNkQr";
+            if (string.IsNullOrEmpty(fileId))
             {
-                Console.WriteLine(resourceName);
+                MessageBox.Show("Please enter a valid file ID.");
+                return;
             }
 
-            // リソース名が正しいか確認してから使用する
-            using (Stream stream = assembly.GetManifestResourceStream("ReceiptClient.Resources.InitialImage.jpeg"))
+            try
             {
-                if (stream != null)
+                //TODO ここのJSONはそれぞれの環境に合わせるこいつが何なのかは詳しく調べていない
+                using (var fs = new FileStream("C:\\Develop\\GoogleDriveSample\\GoogleDriveSample\\black-stream-427203-f8-a21cd982dd8f.json", FileMode.Open, FileAccess.Read))
                 {
-                    c1PictureBox1.Image = Image.FromStream(stream);
+                    GoogleCredential credential = GoogleCredential.FromStream(fs).CreateScoped(DriveService.ScopeConstants.DriveReadonly);
+                    var service = new DriveService(new BaseClientService.Initializer()
+                    {
+                        HttpClientInitializer = credential,
+                        ApplicationName = "My Test App"
+                    });
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        var request = service.Files.Get(fileId);
+                        request.Download(memoryStream);
+                        memoryStream.Position = 0;
+                        c1PictureBox1.Image = System.Drawing.Image.FromStream(memoryStream);
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("リソースが見つかりませんでした。");
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading image: " + ex.Message);
             }
         }
 
