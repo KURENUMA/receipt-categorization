@@ -42,6 +42,7 @@
             // 
             // c1FlexGrid1
             // 
+            this.c1FlexGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.c1FlexGrid1.ColumnInfo = "10,1,0,0,0,-1,Columns:";
             this.c1FlexGrid1.Location = new System.Drawing.Point(570, 101);
             this.c1FlexGrid1.Name = "c1FlexGrid1";
@@ -50,16 +51,19 @@
             // 
             // btnAI
             // 
+            this.btnAI.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAI.Location = new System.Drawing.Point(226, 34);
             this.btnAI.Name = "btnAI";
             this.btnAI.Size = new System.Drawing.Size(173, 23);
             this.btnAI.TabIndex = 41;
-            this.btnAI.Text = "AIで解析";
+            this.btnAI.Text = "AIで解析してExcel出力";
             this.btnAI.UseVisualStyleBackColor = true;
             this.btnAI.Click += new System.EventHandler(this.btnAI_Click);
             // 
             // btnPaste
             // 
+            this.btnPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPaste.Location = new System.Drawing.Point(570, 34);
             this.btnPaste.Name = "btnPaste";
             this.btnPaste.Size = new System.Drawing.Size(173, 23);
@@ -70,6 +74,8 @@
             // 
             // c1PictureBox1
             // 
+            this.c1PictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.c1PictureBox1.Location = new System.Drawing.Point(35, 63);
             this.c1PictureBox1.Name = "c1PictureBox1";
             this.c1PictureBox1.Size = new System.Drawing.Size(510, 707);
@@ -79,6 +85,8 @@
             // 
             // btnImageDownload
             // 
+            this.btnImageDownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.btnImageDownload.Location = new System.Drawing.Point(35, 34);
             this.btnImageDownload.Name = "btnImageDownload";
             this.btnImageDownload.Size = new System.Drawing.Size(173, 23);
@@ -100,6 +108,7 @@
             // 
             // btnClose
             // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.Location = new System.Drawing.Point(1126, 797);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(127, 23);
@@ -110,6 +119,7 @@
             // 
             // btnSave
             // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Location = new System.Drawing.Point(570, 69);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(173, 23);

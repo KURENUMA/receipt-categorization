@@ -46,9 +46,11 @@
             this.c1ComboBox1 = new C1.Win.C1Input.C1ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.c1PictureBox1 = new C1.Win.C1Input.C1PictureBox();
+            this.panelPicture = new System.Windows.Forms.Panel();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.c1ComboBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.c1PictureBox1)).BeginInit();
+            this.panelPicture.SuspendLayout();
             this.SuspendLayout();
             // 
             // textFilterStr
@@ -269,12 +271,22 @@
             // 
             // c1PictureBox1
             // 
-            this.c1PictureBox1.Location = new System.Drawing.Point(746, 104);
+            this.c1PictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.c1PictureBox1.Location = new System.Drawing.Point(12, 14);
             this.c1PictureBox1.Name = "c1PictureBox1";
-            this.c1PictureBox1.Size = new System.Drawing.Size(510, 707);
+            this.c1PictureBox1.Size = new System.Drawing.Size(496, 674);
             this.c1PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.c1PictureBox1.TabIndex = 38;
             this.c1PictureBox1.TabStop = false;
+            // 
+            // panelPicture
+            // 
+            this.panelPicture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelPicture.Controls.Add(this.c1PictureBox1);
+            this.panelPicture.Location = new System.Drawing.Point(734, 104);
+            this.panelPicture.Name = "panelPicture";
+            this.panelPicture.Size = new System.Drawing.Size(522, 707);
+            this.panelPicture.TabIndex = 39;
             // 
             // FrmShowProject
             // 
@@ -283,7 +295,7 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(1278, 847);
-            this.Controls.Add(this.c1PictureBox1);
+            this.Controls.Add(this.panelPicture);
             this.Controls.Add(this.BtnEdit);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.c1ComboBox1);
@@ -304,6 +316,7 @@
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.c1ComboBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.c1PictureBox1)).EndInit();
+            this.panelPicture.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -328,6 +341,7 @@
         private C1.Win.C1Input.C1ComboBox c1ComboBox1;
         private System.Windows.Forms.Label label1;
         private C1.Win.C1Input.C1PictureBox c1PictureBox1;
+        private System.Windows.Forms.Panel panelPicture;
     }
 }
 

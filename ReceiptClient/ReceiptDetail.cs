@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -20,8 +23,9 @@ namespace ReceiptClient
     {
         private static readonly HttpClient httpClient = new HttpClient();
 
-        private const string GPT4V_KEY = ""; // Azure APIキー
-        private const string GPT4V_ENDPOINT = "";
+        private const string QUESTION = "json形式(配列)で日付、内訳、単価、数量、金額、消費税額、合計金額を出力してください。json以外は不要。";
+        private const string GPT4V_ENDPOINT = "https://openai-dis-div-east-us.openai.azure.com/openai/deployments/deployments-gpt4o-dis-div/chat/completions?api-version=2024-02-15-preview";
+
         public ReceiptDetail()
         {
             InitializeComponent();
@@ -36,7 +40,7 @@ namespace ReceiptClient
             // c1FlexGrid1の設定
             c1FlexGrid1.AllowEditing = true;
             c1FlexGrid1.AllowDragging = AllowDraggingEnum.None;
-            c1FlexGrid1.Cols.Count = 10;
+            c1FlexGrid1.Cols.Count = 12;
             c1FlexGrid1.Rows.Count = 50;
             c1FlexGrid1.ClipSeparators = "\t\n";
 
@@ -51,7 +55,11 @@ namespace ReceiptClient
             {
                 if (stream != null)
                 {
-                    c1PictureBox1.Image = Image.FromStream(stream);
+                    // 画像をビットマップにコピーしてから使用
+                    using (var bitmap = new Bitmap(stream))
+                    {
+                        c1PictureBox1.Image = new Bitmap(bitmap);
+                    }
                     c1PictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 }
                 else
@@ -83,7 +91,7 @@ namespace ReceiptClient
 
                 foreach (string line in lines)
                 {
-                    if (string.IsNullOrEmpty(line)) continue;
+                    if (string.IsNullOrEmpty(line.Trim())) continue; // 空行を無視
                     string[] cells = line.Split('\t');
 
                     for (int i = 0; i < cells.Length; i++)
@@ -101,101 +109,178 @@ namespace ReceiptClient
                 MessageBox.Show("データの貼り付け中にエラーが発生しました: " + ex.Message);
             }
         }
+
         private async void btnAI_Click(object sender, EventArgs e)
         {
-            // ウェイトカーソルを表示
-            Application.UseWaitCursor = true;
-
-            try
+            if (c1PictureBox1.Image != null)
             {
-                // c1PictureBox1に表示されている画像を取得
-                if (c1PictureBox1.Image == null)
+                string outputFileName = string.Format("領収書_{0:yyyyMMddHHmmss}.xlsx", DateTime.Now);
+                using (var progressForm = new SimpleProgressForm())
                 {
-                    MessageBox.Show("表示されている画像がありません。");
-                    return;
+                    // この using ブロック内には、画面にアクセス(参照/設定)するコードを記述しないでください
+                    progressForm.Start(this);
+                    string data = await Task.Run(() => Gpt());
+
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                    {
+                        saveFileDialog.Filter = "Excel Files|*.xlsx";
+                        saveFileDialog.Title = "Save an Excel File";
+                        saveFileDialog.FileName = outputFileName;
+
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            outputFileName = saveFileDialog.FileName;
+                            CreateExcel(outputFileName, data);
+                            OpenExcel(outputFileName);
+                        }
+                    }
                 }
-
-                // 画像をメモリーストリームに保存
-                byte[] imageBytes;
-                using (var memoryStream = new MemoryStream())
-                {
-                    c1PictureBox1.Image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    imageBytes = memoryStream.ToArray();
-                }
-
-                // 画像をBase64エンコード
-                string base64Image = Convert.ToBase64String(imageBytes);
-
-                // Azure OpenAI APIにリクエストを送信
-                var result = await SendImageToOpenAIAsync(base64Image, "Please extract the text from this receipt.");
-
-                // 結果を表示
-                MessageBox.Show($"APIレスポンス: {result}");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"エラーが発生しました: {ex.Message}");
-            }
-            finally
-            {
-                // ウェイトカーソルを非表示
-                Application.UseWaitCursor = false;
             }
         }
 
-        private async Task<string> SendImageToOpenAIAsync(string base64Image, string question)
+        public async Task<string> Gpt()
         {
-            using (var httpClient = new HttpClient())
+            string result = "";
+            var encodedImage = ImageToBase64(c1PictureBox1.Image, ImageFormat.Jpeg);
+            try
             {
-                httpClient.DefaultRequestHeaders.Add("api-key", GPT4V_KEY);
-
-                var payload = new
+                using (var httpClient = new HttpClient())
                 {
-                    messages = new object[]
+                    string GPT4V_KEY = Environment.GetEnvironmentVariable("GPT4V_KEY");
+                    httpClient.DefaultRequestHeaders.Add("api-key", GPT4V_KEY);
+                    var payload = new
                     {
-                new {
-                    role = "system",
-                    content = new object[] {
-                        new {
-                            type = "text",
-                            text = "You are an AI assistant that helps people find information."
-                        }
-                    }
-                },
-                new {
-                    role = "user",
-                    content = new object[] {
-                        new {
-                            type = "image_url",
-                            image_url = new {
-                                url = $"data:image/jpeg;base64,{base64Image}"
+                        messages = new object[]
+                        {
+                            new {
+                                role = "system",
+                                content = new object[] {
+                                    new {
+                                        type = "text",
+                                        text = "You are an AI assistant that helps people find information."
+                                    }
+                                }
+                            },
+                            new {
+                                role = "user",
+                                content = new object[] {
+                                    new {
+                                        type = "image_url",
+                                        image_url = new {
+                                            url = $"data:image/jpeg;base64,{encodedImage}"
+                                        }
+                                    },
+                                    new {
+                                        type = "text",
+                                        text = QUESTION
+                                    }
+                                }
                             }
                         },
-                        new {
-                            type = "text",
-                            text = question
-                        }
+                        temperature = 0.7,
+                        top_p = 0.95,
+                        max_tokens = 800,
+                        stream = false
+                    };
+
+                    var response = await httpClient.PostAsync(GPT4V_ENDPOINT, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseData = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                        Console.WriteLine(responseData);
+                        result = responseData["choices"][0]["message"]["content"].ToString();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error: {response.StatusCode}, {response.ReasonPhrase}");
                     }
                 }
-                    },
-                    temperature = 0.7,
-                    top_p = 0.95,
-                    max_tokens = 800,
-                    stream = false
-                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"エラーが発生しました: {ex.Message}");
+            }
+            return result;
+        }
 
-                var response = await httpClient.PostAsync(GPT4V_ENDPOINT, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+        private void CreateExcel(string outputFileName, string data)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(data))
+                {
+                    MessageBox.Show("データが空です。");
+                    return;
+                }
 
-                if (response.IsSuccessStatusCode)
+                using (var wb = new XLWorkbook()) // 型を明示的に指定
                 {
-                    var responseData = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
-                    return responseData.ToString();
+                    wb.Worksheets.Add();
+                    IXLWorksheet ws = wb.Worksheet("Sheet1");
+                    data = data.Replace("```json", ""); // gptからの回答で不要な文字列を削除
+                    data = data.Replace("```", "");
+
+                    var List = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(data);
+
+                    if (List == null)
+                    {
+                        MessageBox.Show("デシリアライズに失敗しました。データ形式を確認してください。");
+                        return;
+                    }
+
+                    bool header = true;
+                    int col = 1;
+                    int row = 2;
+                    foreach (var dic in List)
+                    {
+                        foreach (var kvp in dic)
+                        {
+                            if (header)
+                            {
+                                ws.Cell(1, col).Value = kvp.Key;
+                            }
+
+                            ws.Cell(row, col).Value = kvp.Value;
+                            col++;
+                        }
+                        col = 1;
+                        row++;
+                        header = false;
+                    }
+
+                    wb.SaveAs(outputFileName);
                 }
-                else
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Excelファイルの作成中にエラーが発生しました: {ex.Message}");
+            }
+        }
+
+        public string ImageToBase64(Image image, ImageFormat format)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    return $"Error: {response.StatusCode}, {response.ReasonPhrase}";
+                    // 画像のコピーを作成して保存
+                    using (var tempImage = new Bitmap(image))
+                    {
+                        tempImage.Save(ms, format);
+                    }
+
+                    byte[] imageBytes = ms.ToArray();
+
+                    // バイト配列をBase64文字列に変換
+                    string base64String = Convert.ToBase64String(imageBytes);
+                    return base64String;
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"画像の変換中にエラーが発生しました: {ex.Message}");
+                return null;
             }
         }
 
@@ -249,6 +334,18 @@ namespace ReceiptClient
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void OpenExcel(string filePath)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Excelファイルを開く際にエラーが発生しました: {ex.Message}");
+            }
         }
     }
 }
