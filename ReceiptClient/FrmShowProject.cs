@@ -24,6 +24,7 @@ using System.Reflection;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using System.Text;
 
 namespace ReceiptClient
 {
@@ -488,6 +489,46 @@ namespace ReceiptClient
                 }
             }
             */
+        }
+
+        /// <summary>
+        /// CSV出力ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnOutputCSV_Click(object sender, EventArgs e)
+        {
+            string fName = Path.Combine(Application.LocalUserAppDataPath, DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + ".csv");
+            ExportToCsv(projectGrid1.c1FlexGrid1, fName);
+
+            using (var process = new System.Diagnostics.Process())
+            {
+                process.StartInfo.FileName = fName;
+                process.StartInfo.UseShellExecute = true;
+                process.Start();
+            }
+        }
+
+        /// <summary>
+        /// C1FlexGridの内容をCSV形式で出力
+        /// </summary>
+        /// <param name="grid">出力するC1FlexGrid</param>
+        /// <param name="filePath">出力先のファイルパス</param>
+        private void ExportToCsv(C1FlexGrid grid, string filePath)
+        {
+            var encoding = Encoding.GetEncoding("Shift_JIS");
+            using (var writer = new StreamWriter(filePath, false, encoding))
+            {
+                for (int row = 0; row < grid.Rows.Count; row++)
+                {
+                    List<string> rowData = new List<string>();
+                    for (int col = 0; col < grid.Cols.Count; col++)
+                    {
+                        rowData.Add(grid[row, col]?.ToString());
+                    }
+                    writer.WriteLine(string.Join(",", rowData));
+                }
+            }
         }
     }
 }

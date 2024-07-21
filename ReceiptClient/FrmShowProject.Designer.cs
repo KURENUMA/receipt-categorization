@@ -47,6 +47,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.c1PictureBox1 = new C1.Win.C1Input.C1PictureBox();
             this.panelPicture = new System.Windows.Forms.Panel();
+            this.btnOutputCSV = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.c1ComboBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.c1PictureBox1)).BeginInit();
@@ -81,8 +82,7 @@
             // btnOutputExcel
             // 
             this.btnOutputExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOutputExcel.Enabled = false;
-            this.btnOutputExcel.Location = new System.Drawing.Point(735, 63);
+            this.btnOutputExcel.Location = new System.Drawing.Point(734, 28);
             this.btnOutputExcel.Name = "btnOutputExcel";
             this.btnOutputExcel.Size = new System.Drawing.Size(103, 23);
             this.btnOutputExcel.TabIndex = 28;
@@ -105,7 +105,7 @@
             // 
             this.BtnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.BtnUpdate.Enabled = false;
-            this.BtnUpdate.Location = new System.Drawing.Point(735, 28);
+            this.BtnUpdate.Location = new System.Drawing.Point(602, 64);
             this.BtnUpdate.Name = "BtnUpdate";
             this.BtnUpdate.Size = new System.Drawing.Size(103, 23);
             this.BtnUpdate.TabIndex = 18;
@@ -251,7 +251,7 @@
             this.c1ComboBox1.Items.Add("200");
             this.c1ComboBox1.Items.Add("500");
             this.c1ComboBox1.Items.Add("1000");
-            this.c1ComboBox1.Location = new System.Drawing.Point(603, 65);
+            this.c1ComboBox1.Location = new System.Drawing.Point(602, 30);
             this.c1ComboBox1.Name = "c1ComboBox1";
             this.c1ComboBox1.Size = new System.Drawing.Size(103, 19);
             this.c1ComboBox1.TabIndex = 36;
@@ -263,7 +263,7 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(600, 49);
+            this.label1.Location = new System.Drawing.Point(599, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(85, 13);
             this.label1.TabIndex = 37;
@@ -288,6 +288,17 @@
             this.panelPicture.Size = new System.Drawing.Size(522, 707);
             this.panelPicture.TabIndex = 39;
             // 
+            // btnOutputCSV
+            // 
+            this.btnOutputCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOutputCSV.Location = new System.Drawing.Point(734, 64);
+            this.btnOutputCSV.Name = "btnOutputCSV";
+            this.btnOutputCSV.Size = new System.Drawing.Size(103, 23);
+            this.btnOutputCSV.TabIndex = 40;
+            this.btnOutputCSV.Text = "CSV出力";
+            this.btnOutputCSV.UseVisualStyleBackColor = true;
+            this.btnOutputCSV.Click += new System.EventHandler(this.btnOutputCSV_Click);
+            // 
             // FrmShowProject
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -295,6 +306,7 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.ClientSize = new System.Drawing.Size(1278, 847);
+            this.Controls.Add(this.btnOutputCSV);
             this.Controls.Add(this.panelPicture);
             this.Controls.Add(this.BtnEdit);
             this.Controls.Add(this.label1);
@@ -342,6 +354,7 @@
         private System.Windows.Forms.Label label1;
         private C1.Win.C1Input.C1PictureBox c1PictureBox1;
         private System.Windows.Forms.Panel panelPicture;
+        private System.Windows.Forms.Button btnOutputCSV;
     }
 }
 
